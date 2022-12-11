@@ -6,7 +6,7 @@
 #set echo off
 
 # Bot token as enviroment variable
-export TOKEN='YourBot:Token'
+export TOKEN='YourBot:Token1'
 #echo $TOKEN
 # start bot (we can redirect output from this script)
 python bot_telegram.py
