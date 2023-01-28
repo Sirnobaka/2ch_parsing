@@ -1,6 +1,7 @@
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
-from aiogram.utils.markdown import hlink
+from aiogram.utils.markdown import hlink, text, bold
+from aiogram.utils.markdown import code, pre
 from keyboards import kb_client, kb_gender
 from aiogram.types import ReplyKeyboardRemove
 #
@@ -41,7 +42,7 @@ async def command_help(message: types.Message):
 async def get_threads(message: types.Message):
     soc_link = hlink('soc - Овощной', 'https://2ch.hk/soc/res/5959967.html')
     hc_link = hlink('hc - Поиск тред', 'https://2ch.hk/hc/res/543463.html')
-    links = 'Список доступных тредов:\n' + soc_link + '\n' + hc_link
+    links = 'Список доступных тредов:\n' + soc_link # + '\n' + hc_link
     # reply_markup=ReplyKeyboardRemove() - to delete keyboard after this answer
     await message.answer(links, parse_mode='HTML', disable_web_page_preview=True)
 
@@ -68,7 +69,7 @@ class FSMAdmin(StatesGroup):
 #@dp.message_handler(commands='find', state=None)
 async def cm_start(message: types.Message):
     await FSMAdmin.gender.set()
-    await message.answer('Поиск тянов или кунов (тян, кун)?') #reply_markup=kb_gender
+    await message.answer('Поиск тянов или кунов ("тян", "кун")?\n"все" для поиска любого гендера') #reply_markup=kb_gender
 
 
 # Exit from state machine
@@ -128,7 +129,7 @@ async def input_time(message: types.Message, state: FSMContext):
         req_city = parser_functions.select_city(data['city'])
         req_time = int(data['time_period'])
         print(req_gender, req_age_min, req_age_max, req_city, req_time, sep=' | ')
-        data_out = json_data.filter_data(req_gender, req_age[0], req_age[1], req_city, req_time)
+        data_out = json_data.filter_data(req_gender, req_age_min, req_age_max, req_city, req_time)
         # list with messages from bot (applications)
         bot_message_ids = []
         for d in data_out:
@@ -138,6 +139,13 @@ async def input_time(message: types.Message, state: FSMContext):
         #await message.answer(str(data))
         async with state.proxy() as data:
             data['bot_messages'] = bot_message_ids
+        ###
+        msg = text(bold('Я могу ответить на следующие команды:'))
+        await message.answer('Входные данные твоего запроса \n' +
+            f'Пол: {req_gender}\n' +
+            f'Возраст: {req_age_min} - {req_age_max}\n' +
+            f'Город: {req_city}\n' +
+            f'Показаны анкеты за последние {req_time} дней')
         await message.answer('Это результаты поиска. Если хочешь их очистить нажми /clear\n'+
             'Чтобы начать новый поиск: /start и затем /find')
     await sqlite_db.sql_add_command(state)

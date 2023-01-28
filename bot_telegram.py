@@ -12,7 +12,7 @@ import json
 async def on_startup(_):
     print('Bot is online')
     sqlite_db.sql_start()
-    asyncio.create_task(update_json_every(10))
+    asyncio.create_task(update_json_every(600))
 
 # import handlers from modules
 from handlers import client, admin, other
