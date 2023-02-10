@@ -40,7 +40,7 @@ def filter_date(post_date, days_max):
     date_str = re.split('/| |:', post_date)
     date_str.pop(3)
     date_obj = datetime(int('20'+date_str[2]), int(date_str[1]), int(date_str[0]),\
-                        hour=int(date_str[3]), minute=int(date_str[4]), second=int(date_str[4]))
+                        hour=int(date_str[3]), minute=int(date_str[4]), second=int(date_str[5]))
     date_now = datetime.now()
     delta = date_now - date_obj
     if delta.days < days_max:
